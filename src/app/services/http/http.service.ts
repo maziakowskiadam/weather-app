@@ -15,6 +15,6 @@ export class HttpService {
 	constructor(private http: HttpClient) { }
 
 	getWeather(cityName: string) {
-		return this.http.get(`http://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${this.API_KEY}`);
+		return this.http.get(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${this.API_KEY}`);
 	}
 }
