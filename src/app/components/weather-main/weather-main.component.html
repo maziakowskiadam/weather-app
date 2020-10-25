@@ -1,0 +1,25 @@
+<div class="weather" [ngClass]="weatherData.timeOfDay">
+	<div class="weather__row--refresh">
+		<span>Last checked: {{ parseFetchTime(fetchTime) }}</span>
+		<mat-icon class="refresh-icon" (click)="refresh()" matTooltip="Click to check for new data"
+			matTooltipPosition="above">refresh</mat-icon>
+	</div>
+
+	<div class="weather__row weather__row--name">{{ weatherData.name }}</div>
+	<div class="weather__row weather__row--description">{{ weatherData.description | titlecase }}</div>
+	<div class="weather__row"><img [src]="iconUrl"></div>
+
+	<div class="weather__row weather__row--main-temp"><span (click)="showTempDetails = !showTempDetails"
+			matTooltip="Click to display temperature details" matTooltipPosition="above">{{ weatherData.temp }}°C</span>
+	</div>
+	<div *ngIf="showTempDetails">
+		<div class="weather__row">Feels like: {{ weatherData.tempSensed }}°C</div>
+		<div class="weather__row">
+			<span>Min: {{ weatherData.tempMin }}°C &nbsp;/&nbsp;Max:{{ weatherData.tempMax }}°C</span>
+		</div>
+	</div>
+	<div class="weather__row">Humidity: {{ weatherData.humidity }} %</div>
+	<div class="weather__row">Pressure: {{ weatherData.pressure }} hPa</div>
+	<div class="weather__row">Clouds: {{ weatherData.clouds }} %</div>
+
+</div>
