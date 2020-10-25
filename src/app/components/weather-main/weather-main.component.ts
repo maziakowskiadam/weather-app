@@ -27,13 +27,14 @@ export class WeatherMainComponent implements OnInit {
 		this.getDataAndSetFetchInterval();
 	}
 
+	// Interval makes its first call after first time period passes, hence an extra API call.
+
 	getDataAndSetFetchInterval() {
 		this.httpService.getWeather('Wrocław').subscribe(data => {
 			this.weatherData = this.weatherService.convertWeatherData(data);
 			this.fetchTime = new Date();
-			this.iconUrl = `http://openweathermap.org/img/wn/${this.weatherData.iconCode}@4x.png`;
+			this.iconUrl = `https://openweathermap.org/img/wn/${this.weatherData.iconCode}@4x.png`;
 			this.setFetchInterval();
-			console.log(this.weatherData);
 		});
 	}
 
@@ -42,10 +43,11 @@ export class WeatherMainComponent implements OnInit {
 		this.fetchInterval = interval(300000).pipe(flatMap(() => this.httpService.getWeather('Wrocław'))).subscribe(data => {
 			this.weatherData = this.weatherService.convertWeatherData(data);
 			this.fetchTime = new Date();
-			this.iconUrl = `http://openweathermap.org/img/wn/${this.weatherData.iconCode}@4x.png`;
-			console.log(this.weatherData);
+			this.iconUrl = `https://openweathermap.org/img/wn/${this.weatherData.iconCode}@4x.png`;
 		});
 	}
+
+	// At refresh, interval has to be cleared and set again in order to avoid memory leaks.
 
 	private clearFetchInterval() {
 		if (this.fetchInterval) {

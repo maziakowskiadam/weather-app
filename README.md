@@ -1,9 +1,10 @@
-# WeatherApp
+# [WeatherApp](https://maziakowski-weather-app.netlify.app/)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
+## Overview
+Simple weather widget using OpenWeatherMap API. Data refreshes every 5 minutes but can be also refreshed manually. See temperature details after clicking on main temperature.
 
 ## Development server
-
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding

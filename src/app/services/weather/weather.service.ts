@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -48,6 +47,8 @@ export class WeatherService {
 	}
 
 }
+
+// Custom weather interface for easier API response handling
 
 export interface WeatherData {
 	name?: string;
