@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpService } from 'src/app/services/http/http.service';
 import { WeatherData, WeatherService } from 'src/app/services/weather/weather.service';
 import { interval, Subscription } from 'rxjs';
-import { timeInterval, flatMap } from 'rxjs/operators';
+import { flatMap } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-weather-main',

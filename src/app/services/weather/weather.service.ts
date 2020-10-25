@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { secondsToDate } from 'src/app/utils/date';
+import { kelvinToCelsius } from 'src/app/utils/temperature';
 
 @Injectable({
 	providedIn: 'root'
@@ -8,17 +10,15 @@ export class WeatherService {
 	constructor() { }
 
 	convertWeatherData(data): WeatherData {
-		let weatherData: WeatherData;
-
-		weatherData = {
+		return {
 			name: data.name,
-			time: new Date(data.dt * 1000),
-			sunrise: new Date(data.sys.sunrise * 1000),
-			sunset: new Date(data.sys.sunset * 1000),
-			temp: Math.round(data.main.temp - 272.15),
-			tempSensed: Math.round(data.main.feels_like - 272.15),
-			tempMin: Math.round(data.main.temp_min - 272.15),
-			tempMax: Math.round(data.main.temp_max - 272.15),
+			time: new Date(secondsToDate(data.dt)),
+			sunrise: new Date(secondsToDate(data.sys.sunrise)),
+			sunset: new Date(secondsToDate(data.sys.sunset)),
+			temp: Math.round(kelvinToCelsius(data.main.temp)),
+			tempSensed: Math.round(kelvinToCelsius(data.main.feels_like)),
+			tempMin: Math.round(kelvinToCelsius(data.main.temp_min)),
+			tempMax: Math.round(kelvinToCelsius(data.main.temp_max)),
 			humidity: data.main.humidity,
 			pressure: data.main.pressure,
 			clouds: data.clouds.all,
@@ -27,8 +27,6 @@ export class WeatherService {
 			main: data.weather[0].main,
 			timeOfDay: this.calculateTimeOfDay(data)
 		};
-
-		return weatherData;
 	}
 
 	private calculateTimeOfDay(data): string {
