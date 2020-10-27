@@ -1,61 +1,37 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpService } from 'src/app/services/http/http.service';
-import { WeatherData, WeatherService } from 'src/app/services/weather/weather.service';
-import { interval, Subscription } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { WeatherService } from 'src/app/services/weather/weather.service';
+import { Subscription, timer } from 'rxjs';
+import { OnDestroy } from '@angular/core';
+import { WeatherData } from 'src/app/model/weather-data';
 
 @Component({
 	selector: 'app-weather-main',
 	templateUrl: './weather-main.component.html',
 	styleUrls: ['./weather-main.component.scss']
 })
-export class WeatherMainComponent implements OnInit {
+export class WeatherMainComponent implements OnInit, OnDestroy {
 
-	weatherData: WeatherData = {};
-	fetchInterval: Subscription;
-	fetchTime = new Date();
+	TIME_INTERVAL = 300000;
 	showTempDetails = false;
-	iconUrl = '';
+	refreshTimer$ = timer(0, this.TIME_INTERVAL);
+	weather: WeatherData = {};
+	subscriptions: Subscription[] = [];
 
-	constructor(private httpService: HttpService, private weatherService: WeatherService) { }
+	constructor(private weatherService: WeatherService) { }
 
 	ngOnInit() {
-		this.getDataAndSetFetchInterval();
+		this.subscriptions.push(this.refreshTimer$.subscribe(this.weatherService.refresh$));
+		this.subscriptions.push(
+			this.weatherService.weather$.subscribe(data => this.weather = data));
 	}
 
-	refresh() {
-		this.getDataAndSetFetchInterval();
+	refresh(): void {
+		this.weatherService.refresh$.next(null);
 	}
 
-	// Interval makes its first call after first time period passes, hence an extra API call.
-
-	getDataAndSetFetchInterval() {
-		this.httpService.getWeather('Wrocław').subscribe(data => {
-			this.weatherData = this.weatherService.convertWeatherData(data);
-			this.fetchTime = new Date();
-			this.iconUrl = `https://openweathermap.org/img/wn/${this.weatherData.iconCode}@4x.png`;
-			this.setFetchInterval();
+	ngOnDestroy() {
+		this.subscriptions.forEach(sub => {
+			sub.unsubscribe();
 		});
-	}
-
-	setFetchInterval() {
-		this.clearFetchInterval();
-		this.fetchInterval = interval(300000).pipe(flatMap(() => this.httpService.getWeather('Wrocław'))).subscribe(data => {
-			this.weatherData = this.weatherService.convertWeatherData(data);
-			this.fetchTime = new Date();
-			this.iconUrl = `https://openweathermap.org/img/wn/${this.weatherData.iconCode}@4x.png`;
-		});
-	}
-
-	// At refresh, interval has to be cleared and set again in order to avoid memory leaks.
-
-	private clearFetchInterval() {
-		if (this.fetchInterval) {
-			this.fetchInterval.unsubscribe();
-		}
-	}
-
-	parseFetchTime(fetchTime: Date): string {
-		return `${fetchTime.toLocaleDateString()}, ${fetchTime.toLocaleTimeString()}`;
 	}
 }

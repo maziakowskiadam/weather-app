@@ -1,25 +1,28 @@
-<div class="weather" [ngClass]="weatherData.timeOfDay">
+<div class="weather" [ngClass]="weather.timeOfDay">
+
 	<div class="weather__row--refresh">
-		<span>Last checked: {{ parseFetchTime(fetchTime) }}</span>
+		<span>
+			Last checked: {{ weather.fetchTime | date:'medium' }}
+		</span>
 		<mat-icon class="refresh-icon" (click)="refresh()" matTooltip="Click to check for new data"
 			matTooltipPosition="above">refresh</mat-icon>
 	</div>
 
-	<div class="weather__row weather__row--name">{{ weatherData.name }}</div>
-	<div class="weather__row weather__row--description">{{ weatherData.description | titlecase }}</div>
-	<div class="weather__row"><img [src]="iconUrl"></div>
+	<div class="weather__row weather__row--name">{{ weather.name }}</div>
+	<div class="weather__row weather__row--description">{{ weather.description | titlecase }}</div>
+	<div class="weather__row"><img [src]="weather.iconUrl"></div>
 
 	<div class="weather__row weather__row--main-temp"><span (click)="showTempDetails = !showTempDetails"
-			matTooltip="Click to display temperature details" matTooltipPosition="above">{{ weatherData.temp }}°C</span>
+			matTooltip="Click to display temperature details" matTooltipPosition="above">{{ weather.temp }}°C</span>
 	</div>
 	<div *ngIf="showTempDetails">
-		<div class="weather__row">Feels like: {{ weatherData.tempSensed }}°C</div>
+		<div class="weather__row">Feels like: {{ weather.tempSensed }}°C</div>
 		<div class="weather__row">
-			<span>Min: {{ weatherData.tempMin }}°C &nbsp;/&nbsp;Max: {{ weatherData.tempMax }}°C</span>
+			<span>Min: {{ weather.tempMin }}°C &nbsp;/&nbsp;Max: {{ weather.tempMax }}°C</span>
 		</div>
 	</div>
-	<div class="weather__row">Humidity: {{ weatherData.humidity }} %</div>
-	<div class="weather__row">Pressure: {{ weatherData.pressure }} hPa</div>
-	<div class="weather__row">Clouds: {{ weatherData.clouds }} %</div>
+	<div class="weather__row">Humidity: {{ weather.humidity }} %</div>
+	<div class="weather__row">Pressure: {{ weather.pressure }} hPa</div>
+	<div class="weather__row">Clouds: {{ weather.clouds }} %</div>
 
 </div>

@@ -1,18 +1,33 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { exhaustMap, map } from 'rxjs/operators';
+import { WeatherData } from 'src/app/model/weather-data';
 import { secondsToDate } from 'src/app/utils/date';
 import { kelvinToCelsius } from 'src/app/utils/temperature';
+import { HttpService } from '../http/http.service';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class WeatherService {
 
-	constructor() { }
+	refresh$ = new BehaviorSubject(null);
+
+	constructor(private httpService: HttpService) { }
+
+	loadWeather$: Observable<WeatherData> = this.httpService.getWeather('Wrocław').pipe(
+		map(data => this.convertWeatherData(data))
+	);
+
+	weather$ = this.refresh$.pipe(
+		exhaustMap(() => this.loadWeather$)
+	);
 
 	convertWeatherData(data): WeatherData {
 		return {
 			name: data.name,
 			time: new Date(secondsToDate(data.dt)),
+			fetchTime: new Date(),
 			sunrise: new Date(secondsToDate(data.sys.sunrise)),
 			sunset: new Date(secondsToDate(data.sys.sunset)),
 			temp: Math.round(kelvinToCelsius(data.main.temp)),
@@ -22,7 +37,7 @@ export class WeatherService {
 			humidity: data.main.humidity,
 			pressure: data.main.pressure,
 			clouds: data.clouds.all,
-			iconCode: data.weather[0].icon,
+			iconUrl: `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`,
 			description: data.weather[0].description,
 			main: data.weather[0].main,
 			timeOfDay: this.calculateTimeOfDay(data)
@@ -30,9 +45,9 @@ export class WeatherService {
 	}
 
 	private calculateTimeOfDay(data): string {
-		const sunrise = new Date(data.sys.sunrise * 1000);
-		const sunset = new Date(data.sys.sunset * 1000);
-		const dt = new Date(data.dt * 1000);
+		const sunrise = new Date(secondsToDate(data.sys.sunrise));
+		const sunset = new Date(secondsToDate(data.sys.sunset));
+		const dt = new Date(secondsToDate(data.dt));
 
 		if (dt > sunrise && dt.getHours() < 12) {
 			return 'morning';
@@ -43,25 +58,4 @@ export class WeatherService {
 		}
 
 	}
-
-}
-
-// Custom weather interface for easier API response handling
-
-export interface WeatherData {
-	name?: string;
-	time?: Date;
-	sunrise?: Date;
-	sunset?: Date;
-	temp?: number;
-	tempSensed?: number;
-	tempMin?: number;
-	tempMax?: number;
-	humidity?: number;
-	pressure?: number;
-	clouds?: number;
-	iconCode?: string;
-	description?: string;
-	main?: string;
-	timeOfDay?: string;
 }
